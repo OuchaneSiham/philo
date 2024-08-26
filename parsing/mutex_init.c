@@ -1,42 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mutex_init.c                                       :+:      :+:    :+:   */
+/*   init_mutex.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: souchane <souchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/16 15:10:13 by souchane          #+#    #+#             */
-/*   Updated: 2024/08/20 14:12:39 by souchane         ###   ########.fr       */
+/*   Created: 2024/08/25 13:43:26 by souchane          #+#    #+#             */
+/*   Updated: 2024/08/25 15:28:33 by souchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../philo.h"
-
 static int initialize_single_mutex(pthread_mutex_t *mutex)
 {
-    if(pthread_mutex_init(mutex, NULL) != 0)
-        return ERROR;
-   return SUCCESS;
+    if (pthread_mutex_init(mutex, NULL) != 0)
+        return 1;
+    return 0;
 }
-static int initialize_all_forks(t_philo *philos)
+int 	init_mutex(t_philo *philo, t_content *phs, pthread_mutex_t *n_forks, int num_ph)
 {
-    int nbr;
-    nbr = philos->philo_number;
-    while(--nbr >= 0)
-    {
-        if(initialize_single_mutex((&philos->n_forks[nbr])) != 0)
-            return ERROR;
-    }
-   return SUCCESS;
-}
-int initialize_locks(t_philo *philo)
-{
-    if(initialize_all_forks(philo) != 0)
-        return ERROR;
-    if(initialize_single_mutex(&(philo->action_lock)) != 0)
-        return ERROR;
-    if(initialize_single_mutex(&(philo->check_meal_lock)) != 0)
-        return ERROR;
-   return SUCCESS;
+	int	i;
+    
+	philo->gone_flag = 0;
+	philo->philos = phs;
+    if(initialize_single_mutex(&philo->action_mutex) != 0 ||
+	    initialize_single_mutex(&philo->gone_mutex) != 0 ||
+	    initialize_single_mutex(&philo->check_meal_mutex) != 0)
+        return 1;
+	i = 0;
+	while (i < num_ph)
+	{
+		if(initialize_single_mutex(&n_forks[i]) != 0)
+            return 1;
+		i++;
+	}
+    return 0;
 }

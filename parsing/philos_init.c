@@ -5,35 +5,51 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: souchane <souchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/17 10:49:59 by souchane          #+#    #+#             */
-/*   Updated: 2024/08/23 14:53:29 by souchane         ###   ########.fr       */
+/*   Created: 2024/08/25 14:40:10 by souchane          #+#    #+#             */
+/*   Updated: 2024/08/25 15:28:47 by souchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../philo.h"
-
-static void init_single_philosopher(t_philo *philo, int index)
+void	parse_args(t_content *philo, char **av)
 {
-    philo->philos[index].ids = index;
-    philo->philos[index].eat_count = 0;
-    philo->philos[index].id_l_fork = index;
-    if(index == philo->philo_number - 1)
-        philo->philos[index].id_r_fork = 0;
-    else 
-        philo->philos[index].id_r_fork = index + 1;
-        philo->philos[index].last_meal_check = 0;
-        philo->philos[index].philo = philo;
-}
-static void  init_phs_recursive(t_philo *philo ,int index)
-{
-    if(index < 0)
-    return ;
-    init_single_philosopher(philo, index);
-    init_phs_recursive(philo, index - 1);
+	philo->phs_nb = ft_atoi(av[1]);
+	philo->die_time= ft_atoi(av[2]);
+	philo->eat_time = ft_atoi(av[3]);
+	philo->sleep_time = ft_atoi(av[4]);
+	if (av[5])
+		philo->meals_num_to_eat = ft_atoi(av[5]);
+	else
+		philo->meals_num_to_eat = -1;
 }
 
-int initialize_phs(t_philo *philo)
+// Initializing the philosophers
+
+int 	initialize_phs(t_content *phs, t_philo *philo, pthread_mutex_t *n_forks,
+		char **av)
 {
-    init_phs_recursive(philo, philo->philo_number - 1);
-    return SUCCESS;
+	int	i;
+
+	i = 0;
+	while (i < ft_atoi(av[1]))
+	{
+		phs[i].index = i + 1;
+		phs[i].eat = 0;
+		phs[i].meals_count = 0;
+		parse_args(&phs[i], av);
+		phs[i].start_time = get_time();
+		phs[i].last_meal_check = get_time();
+		phs[i].action_mutex = &philo->action_mutex;
+		phs[i].gone_mutex = &philo->gone_mutex;
+		phs[i].check_meal_mutex = &philo->check_meal_mutex;
+		phs[i].gone = &philo->gone_flag;
+		phs[i].left_fork = &n_forks[i];
+		if (i == 0)
+			phs[i].right_fork = &n_forks[phs[i].phs_nb - 1];
+		else
+			phs[i].right_fork = &n_forks[i - 1];
+		i++;
+	}
+	return 0;
 }

@@ -5,70 +5,70 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: souchane <souchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 14:53:11 by souchane          #+#    #+#             */
-/*   Updated: 2024/08/23 17:38:09 by souchane         ###   ########.fr       */
+/*   Created: 2024/08/25 11:37:10 by souchane          #+#    #+#             */
+/*   Updated: 2024/08/26 13:46:53 by souchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
-#define ERROR 1
-#define SUCCESS 0
-#define N_PHILO 250
-#include<unistd.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include <pthread.h>
-#include <sys/time.h>
-#include <string.h>
-struct s_philo;
+# include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <unistd.h>
+# define PHILO_MAX 300
 
-typedef struct s_phs_infos
+typedef struct s_content
 {
-    int ids;
-    int id_l_fork;
-    int id_r_fork;
-    int  eat_count;
-    long long  last_meal_check;
-    struct s_philo *philo;
-    pthread_t id_of_thread;
-} t_phs_infos;
+	pthread_t		id_thread;
+	int				index;
+	int				eat;
+	int				meals_count;
+	size_t			last_meal_check;
+	size_t			die_time;
+	size_t			eat_time;
+	size_t			sleep_time;
+	size_t			start_time;
+	int				phs_nb;
+	int				meals_num_to_eat;
+	int				*gone;
+	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*action_mutex;
+	pthread_mutex_t	*gone_mutex;
+	pthread_mutex_t	*check_meal_mutex;
+}					t_content;
+
+
 
 typedef struct s_philo
 {
-    int philo_number;
-    int die_time;
-    int eat_time;
-    int sleep_time;
-    int meals_number;
-    int gone;
-    int all_done_eating;
-    long long  start_time;
-    pthread_mutex_t check_meal_lock;  
-    pthread_mutex_t n_forks[N_PHILO];
-    pthread_mutex_t action_lock;
-    t_phs_infos philos[N_PHILO];
-} t_philo;
-
-// init args, locks, phs
-int initialize(t_philo *philo, char **args);
-int check_args(t_philo *philo, char **args);
-int initialize_locks(t_philo *philo);
-int initialize_phs(t_philo *philo);
-//about time
-time_t	get_time(void);
-void  check_time(time_t time, t_philo *philo);
-// routine
-int simulation(t_philo *philo);
-int create_philo_threads(t_philo *philo);
-void monitor(t_philo *philo, t_phs_infos *infos);
-void join_thread(t_philo *philo, t_phs_infos *infos);
-void destroy_thread(t_philo *philo);
+	int				gone_flag;
+	pthread_mutex_t	gone_mutex;
+	pthread_mutex_t	check_meal_mutex;
+	pthread_mutex_t	action_mutex;
+	t_content		*philos;
+}					t_philo;
+// about time
+long long	get_time(void);
+int		ft_delay(long long milliseconds);
+// utils
+int	ft_atoi(const char *str);
+void	ft_putstr_fd(char *s, int fd);
 // moves
-void printing(t_philo *philo, int id, char *move);
-void eating_action(t_phs_infos *infos);
-//utils
-int			ft_atoi(const char *str);
-void ft_putstr_fd(char *s, int fd);
+void	printing(t_content *philo, int id, char *move);
+void eating_action(t_content *phs);
+// init
+int	check_args(char **av);
+int	init_mutex(t_philo *philo, t_content *phs, pthread_mutex_t *n_forks, int num_ph);
+int	initialize(t_philo *philo, t_content *phs, pthread_mutex_t *n_forks, char **av);
+int 	initialize_phs(t_content *phs, t_philo *philo, pthread_mutex_t *n_forks, char **av);
+// simulation
+void  *tracking(void *sole_arg);
+int create_threads(t_philo *simu, pthread_t *watcher);
+int join_threads(t_philo *simu, pthread_t watcher);
+int destroy_threads(t_philo *philo, pthread_mutex_t *n_forks);
+int simulation(t_philo *philos, pthread_mutex_t *n_forks);
 #endif

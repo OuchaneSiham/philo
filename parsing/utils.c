@@ -5,13 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: souchane <souchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/14 16:18:03 by souchane          #+#    #+#             */
-/*   Updated: 2024/08/23 14:48:53 by souchane         ###   ########.fr       */
+/*   Created: 2024/08/25 12:53:24 by souchane          #+#    #+#             */
+/*   Updated: 2024/08/25 12:56:10 by souchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
-
 int	ft_atoi(const char *str)
 {
 	long int	n;

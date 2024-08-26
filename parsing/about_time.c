@@ -5,15 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: souchane <souchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/17 14:30:07 by souchane          #+#    #+#             */
-/*   Updated: 2024/08/20 13:12:34 by souchane         ###   ########.fr       */
+/*   Created: 2024/08/25 15:08:58 by souchane          #+#    #+#             */
+/*   Updated: 2024/08/26 14:06:04 by souchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../philo.h"
 
-time_t	get_time(void)
+long long	get_time(void)
 {
 	struct timeval		tv;
     long long  time;
@@ -25,16 +24,25 @@ time_t	get_time(void)
     time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	return (time);
 }
-void  check_time(time_t time, t_philo *philo)
+// void  check_time(time_t time, t_philo *philo)
+// {
+//     time_t time0;
+//     time_t timex;
+//     time0 = get_time();
+//     while(!(philo->gone))
+//     {
+//         timex = get_time();
+//         if((timex - time0) >= time)
+//             break;
+//         usleep(50);
+//     }
+// }
+int	ft_delay(long long milliseconds)
 {
-    time_t time0;
-    time_t timex;
-    time0 = get_time();
-    while(!(philo->gone))
-    {
-        timex = get_time();
-        if((timex - time0) >= time)
-            break;
-        usleep(50);
-    }
+	long	now;
+
+	now = get_time();
+	while (get_time() < milliseconds + now)
+		usleep(400);
+	return (0);
 }
